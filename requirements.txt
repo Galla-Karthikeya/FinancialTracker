@@ -27,6 +27,7 @@ et_xmlfile==2.0.0
 fastapi==0.115.14
 flasgger==0.9.7.1
 Flask==3.1.1
+gunicorn
 flask-cors==6.0.1
 google==3.0.0
 google-api-core==2.25.1
