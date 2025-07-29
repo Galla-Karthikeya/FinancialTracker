@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import traceback
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+import json
 
 # Configure logging for models (optional, but good for debugging)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -46,7 +47,9 @@ def initialize_sheet(sheet_id, service_account_file):
         "https://spreadsheets.google.com/feeds",
         "https://www.googleapis.com/auth/drive"
     ]
-    creds = ServiceAccountCredentials.from_json_keyfile_name(service_account_file, scope)
+    # creds = ServiceAccountCredentials.from_json_keyfile_name(service_account_file, scope)
+    creds_dict = json.loads(service_account_file)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     spreadsheet = client.open_by_key(sheet_id)
     return client, spreadsheet
@@ -262,7 +265,9 @@ class GSheetManager:
             if not GOOGLE_SHEET_ID or not SERVICE_ACCOUNT_FILE:
                 raise ValueError("GOOGLE_SHEET_ID or SERVICE_ACCOUNT_FILE not set in .env")
 
-            self.credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+            # self.credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+            creds_dict = json.loads(SERVICE_ACCOUNT_FILE)
+            self.credentials = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
             self.client = gspread.authorize(self.credentials)
 
             # Access specific worksheets
