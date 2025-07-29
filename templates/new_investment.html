@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Start New Investment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2a9d8f;
+      --secondary: #264653;
+      --background: #f4f7fa;
+      --text: #333;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background);
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      height: 100vh;
+    }
+
+    .sidebar {
+      background: var(--background);
+      padding: 30px 20px;
+      color: var(--text);
+      border-right: 2px solid #ccc;
+    }
+
+    .sidebar .logo {
+      font-size: 1.8em;
+      font-weight: 700;
+      margin-bottom: 40px;
+      color: var(--secondary);
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin: 20px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 1.05em;
+      padding: 12px 16px;
+      display: block;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .main {
+      padding: 40px 60px;
+    }
+
+    .main h2 {
+      font-size: 26px;
+      color: var(--text);
+      margin-bottom: 30px;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .form-section {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      background-color: #264653;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #5c1313;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #5c2d91;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .summary-box {
+      background: #ffffff;
+      padding: 30px 25px;
+      border-left: 6px solid #2a9d8f;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .summary-box h3 {
+      margin-bottom: 15px;
+      color: var(--secondary);
+    }
+
+    .summary-box ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .summary-box ul li {
+      margin-bottom: 12px;
+      padding-left: 10px;
+      position: relative;
+    }
+
+    .summary-box ul li::before {
+      content: "✔️";
+      position: absolute;
+      left: -20px;
+      top: 0;
+    }
+
+    .fancy-summary {
+  background: #ffffff;
+  border-left: 6px solid #2a9d8f;
+  border-radius: 14px;
+  padding: 30px 35px;
+  margin-top: 40px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  font-size: 16px;
+  color: var(--text);
+  position: relative;
+}
+
+.fancy-summary h3 {
+  font-size: 22px;
+  color: var(--secondary);
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fancy-summary ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fancy-summary ul li {
+  margin-bottom: 14px;
+  padding-left: 28px;
+  position: relative;
+  font-size: 16px;
+}
+
+.fancy-summary ul li::before {
+  content: "✔️";
+  position: absolute;
+  left: 0;
+  top: 1px;
+}
+
+.fancy-summary a.button {
+  display: inline-block;
+  margin-top: 25px;
+  background: var(--secondary);
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.fancy-summary a.button:hover {
+  background: #5c1313;
+}
+
+.flip-card {
+  background-color: transparent;
+  width: 280px;
+  height: 200px;
+  perspective: 1000px;
+  margin-top: 40px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  background: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.flip-card-front {
+  border-left: 6px solid #2a9d8f;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  border-left: 6px solid #264653;
+}
+
+.flip-card h3 {
+  margin-top: 0;
+  color: #264653;
+}
+
+.flip-card p {
+  margin: 8px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo">💰 FinTrack</div>
+      <ul>
+        <li><a href="{{ url_for('add_expense') }}">➕ Add Expense</a></li>
+        <li><a href="{{ url_for('new_investment') }}">📈 Start New Investment</a></li>
+        <li><a href="{{ url_for('transaction_history') }}">📜 Transaction History</a></li>
+        <li><a href="{{ url_for('investment_history') }}">📋 Investment History</a></li>
+        <li><a href="#">🧮 Investment Calculator</a></li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <h2>Start a New Investment</h2>
+      <div class="grid-layout">
+        <!-- Form -->
+        <div class="form-section">
+          <form method="POST" id="investmentForm">
+            <label for="plan_name">Plan Name:</label>
+            <input type="text" name="plan_name" id="plan_name" required>
+
+            <label for="investment_type">Type of Investment:</label>
+            <select name="investment_type" id="investment_type" required onchange="renderDynamicFields()">
+              <option value="SIP">SIP</option>
+              <option value="MF">Mutual Fund</option>
+              <option value="FD">Fixed Deposit</option>
+              <option value="RD">Recurring Deposit</option>
+            </select>
+
+            <div id="dynamicFields"></div>
+
+            <button type="submit">Submit Investment</button>
+          </form>
+          <a class="back-link" href="{{ url_for('dashboard') }}">⬅ Back to Dashboard</a>
+        </div>
+
+        <!-- Summary -->
+        {% if summary %}
+        <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+            <h3>💼 Type: {{ summary.type }}</h3>
+            <p>🚗 Plan: {{ summary.plan_name }}</p>
+            <p>💰 ₹{{ summary.invested_amount }}</p>
+            </div>
+            <div class="flip-card-back">
+            <p>📈 Interest: {{ summary.rate }}%</p>
+            <p>🕒 Period: {{ summary.years }} Years</p>
+            <p>📊 Profit: ₹{{ summary.profit }}</p>
+            <p>🏁 Maturity: ₹{{ summary.total }}</p>
+            </div>
+        </div>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="back-link">🔙 Go to Dashboard</a>
+        {% endif %}
+
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function renderDynamicFields() {
+      const type = document.getElementById('investment_type').value;
+      const container = document.getElementById('dynamicFields');
+      let html = '';
+
+      if (type === "SIP" || type === "RD") {
+        html += `
+          <label>Monthly Investment (₹):</label>
+          <input type="number" name="amount" step="0.01" required>
+          <label>Time Period (Years):</label>
+          <input type="number" name="years" step="1" required>
+        `;
+      } else if (type === "MF" || type === "FD") {
+        html += `
+          <label>One-Time Investment (₹):</label>
+          <input type="number" name="amount" step="0.01" required>
+          <label>Time Period (Years):</label>
+          <input type="number" name="years" step="1" required>
+        `;
+      }
+
+      html += `
+        <label>Interest Rate (%):</label>
+        <input type="number" name="interest_rate" step="0.01" required>
+        <label>Start Date:</label>
+        <input type="date" name="date" required>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    window.onload = renderDynamicFields;
+  </script>
+</body>
+</html>

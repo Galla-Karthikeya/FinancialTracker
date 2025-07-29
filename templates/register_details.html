@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Complete Registration</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f2f5fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #264653;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background-color: #2a9d8f;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #21867c;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-box">
+        <h2>Almost there, {{name}}!</h2>
+        <form method="POST">
+            <label for="salary">Monthly Salary (₹)</label>
+            <input type="number" name="salary" required>
+
+            <label for="bank_balance">Bank Balance (₹)</label>
+            <input type="number" name="bank_balance" required>
+
+            <button type="submit">Finish Registration</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📜 Transaction History</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            padding: 30px;
+            background: #f6f9fc;
+            color: #333;
+        }
+        h2 {
+            color: #264653;
+            margin-bottom: 20px;
+        }
+        .txn-card {
+            background: white;
+            border-left: 5px solid #2a9d8f;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        .debit {
+            border-left-color: #e63946;
+        }
+        .credit {
+            border-left-color: #2a9d8f;
+        }
+        a {
+            color: #264653;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>📜 Transaction History</h2>
+
+{% if transactions %}
+    {% for txn in transactions %}
+        <div class="txn-card {% if txn['Debit/Credit'] == 'Debit' %}debit{% else %}credit{% endif %}">
+            {% if txn['Debit/Credit'] == 'Debit' %}
+                <p>💸 Spent ₹{{ txn.amount }} on {{ txn.category }}</p>
+            {% else %}
+                <p>💰 Received ₹{{ txn.amount }} under {{ txn.category }}</p>
+            {% endif %}
+            <p>📅 Date: {{ txn.date }} 🕒 Time: {{ txn.time }}</p>
+            <p>📝 Description: {{ txn.description }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No transactions found.</p>
+{% endif %}
+
+<a href="{{ url_for('dashboard') }}">⬅ Back to Dashboard</a>
+
+</body>
+</html>

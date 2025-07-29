@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Investment Calculator | FinTrack</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fa;
+      padding: 40px;
+      color: #264653;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 25px;
+    }
+
+    .calc-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    .calc-form {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .calc-summary {
+      background-color: #e8f5e9;
+      border-left: 6px solid #2a9d8f;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      color: #264653;
+    }
+
+    .calc-summary h3 {
+      margin-bottom: 20px;
+      color: #2a9d8f;
+    }
+
+    .calc-summary ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .calc-summary ul li {
+      padding: 10px 0;
+      border-bottom: 1px dashed #ccc;
+      font-size: 16px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      margin-top: 15px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #5c2d91;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Investment Calculator</h1>
+
+
+  <div class="calc-container">
+    <form class="calc-form" method="POST">
+      <label for="calc_type">Select Calculator Type:</label>
+      <select id="calc_type" name="calc_type" onchange="renderFields()" required>
+        <option value="">-- Select --</option>
+        <option value="sip">SIP</option>
+        <option value="lumpsum">Lump Sum</option>
+        <option value="fd">Fixed Deposit (FD)</option>
+        <option value="rd">Recurring Deposit (RD)</option>
+        <option value="emi">Loan EMI</option>
+        <option value="salary">In-Hand Salary</option>
+      </select>
+
+      <div id="dynamicFields"></div>
+
+      <button type="submit">Calculate</button>
+    </form>
+
+    {% if result %}
+    <div class="calc-summary">
+    <h3>📈 Your Investment Insights! ({{ result.type }})</h3>
+    <ul>
+      {% if result.type in ['SIP', 'Lump Sum', 'FD', 'RD'] %}
+        <li><strong>Invested:</strong> ₹{{ result.invested }}</li>
+        <li><strong>Estimated Profit:</strong> ₹{{ result.profit }}</li>
+        <li><strong>Maturity Amount:</strong> ₹{{ result.maturity }}</li>
+      {% elif result.type == 'EMI' %}
+        <li><strong>Monthly EMI:</strong> ₹{{ result.emi }}</li>
+        <li><strong>Total Payment:</strong> ₹{{ result.total }}</li>
+        <li><strong>Total Interest:</strong> ₹{{ result.interest }}</li>
+      {% elif result.type == 'Salary' %}
+        <li><strong>Gross Salary:</strong> ₹{{ result.gross }}</li>
+        <li><strong>Total Deductions:</strong> ₹{{ result.deductions }}</li>
+        <li><strong>In-Hand Salary:</strong> ₹{{ result.net }}</li>
+      {% endif %}
+    </ul>
+    <p style="font-style: italic; color: gray; text-align: center;">"Smart investing is long-term patience."</p>
+    </div>
+    {% endif %}
+
+  </div>
+  <a class="back-link" href="{{ url_for('dashboard') }}">⬅ Back to Dashboard</a>
+  
+
+  <script>
+    function renderFields() {
+      const type = document.getElementById("calc_type").value;
+      const container = document.getElementById("dynamicFields");
+      let html = "";
+
+      if (type === 'sip' || type === 'lumpsum' || type === 'fd') {
+        html += `
+          <label>Investment Amount (₹):</label>
+          <input type="number" name="amount" step="0.01" required>
+
+          <label>Annual Interest Rate (%):</label>
+          <input type="number" name="rate" step="0.01" required>
+
+          <label>Time Period (in Years):</label>
+          <input type="number" name="years" required>
+        `;
+      } else if (type === 'rd') {
+        html += `
+          <label>Monthly Amount (₹):</label>
+          <input type="number" name="amount" step="0.01" required>
+
+          <label>Annual Interest Rate (%):</label>
+          <input type="number" name="rate" step="0.01" required>
+
+          <label>Time Period (in Months):</label>
+          <input type="number" name="months" required>
+        `;
+      } else if (type === 'emi') {
+        html += `
+          <label>Loan Principal Amount (₹):</label>
+          <input type="number" name="principal" step="0.01" required>
+
+          <label>Annual Interest Rate (%):</label>
+          <input type="number" name="rate" step="0.01" required>
+
+          <label>Time Period (in Years):</label>
+          <input type="number" name="years" required>
+        `;
+      } else if (type === 'salary') {
+        html += `
+          <label>Basic Salary (₹):</label>
+          <input type="number" name="basic" step="0.01" required>
+
+          <label>HRA (₹):</label>
+          <input type="number" name="hra" step="0.01" required>
+
+          <label>Other Allowances (₹):</label>
+          <input type="number" name="other_allowances" step="0.01" required>
+
+          <label>Tax Amount (₹):</label>
+          <input type="number" name="tax" step="0.01">
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    window.onload = renderFields;
+  </script>
+</body>
+</html>

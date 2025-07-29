@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2a9d8f;
+      --secondary: #264653;
+      --background: #f4f7fa;
+      --text: #333;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background);
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      height: 100vh;
+    }
+
+    .sidebar {
+      background: var(--background);
+      padding: 30px 20px;
+      color: var(--text);
+      border-right: 2px solid #ccc;
+    }
+
+    .sidebar .logo {
+      font-size: 1.8em;
+      font-weight: 700;
+      margin-bottom: 40px;
+      color: var(--secondary);
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin: 20px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 1.05em;
+      padding: 12px 16px;
+      display: block;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .main {
+      padding: 40px 50px;
+      overflow-y: auto;
+    }
+
+    .main h1 {
+      font-size: 30px;
+      color: var(--text);
+      margin-bottom: 30px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 25px;
+    }
+
+    .card {
+      background: white;
+      flex: 1;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      color: var(--secondary);
+    }
+
+    .card p {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    table {
+      width: 100%;
+      margin-top: 50px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 18px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .credit {
+      color: green;
+      font-weight: bold;
+    }
+
+    .debit {
+      color: red;
+      font-weight: bold;
+    }
+    .plain-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.plain-link:hover {
+  text-decoration: underline; /* optional for hover effect */
+}
+.plain-link span {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 16px;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo">💰 FinTrack</div>
+      <ul>
+        <li><a href="{{ url_for('add_expense') }}">➕ Add Expense</a></li>
+        <li><a href="{{ url_for('new_investment') }}">📈 Start New Investment</a></li>
+        <li><a href="{{ url_for('transaction_history') }}">📜 Transaction History</a></li>
+        <li><a href="{{ url_for('investment_history') }}">📋 Investment History</a></li>
+        <li><a href="{{ url_for('investment_calculator') }}">🧮 Investment Calculator</a></li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <h1>Welcome, {{ name }}</h1>
+      <div class='plain-link'>
+        <span style="cursor: pointer;" onclick="window.location.href='{{ url_for('logout') }}'">🚪 Logout</span>
+      </div>
+      
+
+      <div class="cards">
+        <div class="card">
+          <h3>Bank Balance</h3>
+          <p>₹{{ bank_balance }}</p>
+        </div>
+        <div class="card">
+          <h3>Total Savings</h3>
+          <p>₹{{ total_savings }}</p>
+        </div>
+        <div class="card">
+          <h3>Upcoming Deductions</h3>
+          {% if upcoming_deduction %}
+            <ul style="padding-left: 20px; font-size: 14px; color: var(--text);">
+              {% for d in upcoming_deduction %}
+                <li>{{ d.date }} - {{ d.plan }} ₹{{ d.amount }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p style="font-size: 14px; color: #666;">No deductions next month</p>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <h2 style="margin-top: 50px;">Last 5 Transactions</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for txn in last_5_expenses %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>₹{{ txn.amount }}</td>
+            <td>{{ txn.category }}</td>
+            <td>{{ txn.date }}</td>
+            <td>{% if txn.type == 'Credit' %}<span class="credit">+ Credit</span>{% else %}<span class="debit">- Debit</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </main>
+  </div>
+</body>
+</html>
