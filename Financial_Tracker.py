@@ -43,7 +43,7 @@ print(f"DEBUG: GOOGLE_SHEET_ID loaded as: {GOOGLE_SHEET_ID}")
 # Define Google Sheets API scopes
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/drive.file'
+    'https://www.googleapis.com/auth/drive'
 ]
 
 import gspread
