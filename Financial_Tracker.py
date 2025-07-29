@@ -10,6 +10,13 @@ import traceback
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import json
+import gspread
+import logging
+import traceback
+import os
+import requests
+
+from google.oauth2 import service_account
 
 # Configure logging for models (optional, but good for debugging)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -42,14 +49,15 @@ SCOPES = [
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-def initialize_sheet(sheet_id, service_account_file):
+def initialize_sheet(sheet_id, SERVICE_ACCOUNT_FILE):
     scope = [
         "https://spreadsheets.google.com/feeds",
         "https://www.googleapis.com/auth/drive"
     ]
-    # creds = ServiceAccountCredentials.from_json_keyfile_name(service_account_file, scope)
-    creds_dict = json.loads(service_account_file)
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    response = requests.get(SERVICE_ACCOUNT_FILE)
+    response.raise_for_status()
+    creds_dict = json.loads(response.content)
+    creds = service_account.Credentials.from_service_account_info(creds_dict, scopes=scope)
     client = gspread.authorize(creds)
     spreadsheet = client.open_by_key(sheet_id)
     return client, spreadsheet
@@ -261,16 +269,16 @@ class GSheetManager:
         if self._initialized:
             return
         try:
-            # Ensure GOOGLE_SHEET_ID and SERVICE_ACCOUNT_FILE are loaded
             if not GOOGLE_SHEET_ID or not SERVICE_ACCOUNT_FILE:
-                raise ValueError("GOOGLE_SHEET_ID or SERVICE_ACCOUNT_FILE not set in .env")
+                raise ValueError("GOOGLE_SHEET_ID or SERVICE_ACCOUNT_FILE_URL not set in environment")
 
-            # self.credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-            creds_dict = json.loads(SERVICE_ACCOUNT_FILE)
-            self.credentials = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+            response = requests.get(SERVICE_ACCOUNT_FILE)
+            response.raise_for_status()
+            creds_dict = json.loads(response.content)
+
+            self.credentials = service_account.Credentials.from_service_account_info(creds_dict)
             self.client = gspread.authorize(self.credentials)
 
-            # Access specific worksheets
             self.financial_tracker_sheet = self.client.open_by_key(GOOGLE_SHEET_ID).worksheet("Financial Tracker")
             self.daily_expense_sheet = self.client.open_by_key(GOOGLE_SHEET_ID).worksheet("Daily Expense Tracker")
             self.investment_details_sheet = self.client.open_by_key(GOOGLE_SHEET_ID).worksheet("Investment Details")
@@ -283,7 +291,6 @@ class GSheetManager:
             self.financial_tracker_sheet = None
             self.daily_expense_sheet = None
             self.investment_details_sheet = None
-            # Mark as initialized to prevent repeated connection attempts if it failed once
             self._initialized = True
 
 # Global instance of GSheetManager
