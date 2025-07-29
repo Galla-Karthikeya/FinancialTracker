@@ -42,22 +42,22 @@ print(f"DEBUG: GOOGLE_SHEET_ID loaded as: {GOOGLE_SHEET_ID}")
 
 # Define Google Sheets API scopes
 SCOPES = [
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/drive'
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
 ]
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 def initialize_sheet(sheet_id, SERVICE_ACCOUNT_FILE):
-    scope = [
-        "https://spreadsheets.google.com/feeds",
-        "https://www.googleapis.com/auth/drive"
+    scopes = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
     ]
     response = requests.get(SERVICE_ACCOUNT_FILE)
     response.raise_for_status()
     creds_dict = json.loads(response.content)
-    creds = service_account.Credentials.from_service_account_info(creds_dict, scopes=scope)
+    creds = service_account.Credentials.from_service_account_info(creds_dict, scopes=scopes)
     client = gspread.authorize(creds)
     spreadsheet = client.open_by_key(sheet_id)
     return client, spreadsheet
@@ -266,6 +266,7 @@ class GSheetManager:
         return cls._instance
 
     def __init__(self):
+        self._initialized = False
         if self._initialized:
             return
         try:
@@ -276,7 +277,7 @@ class GSheetManager:
             response.raise_for_status()
             creds_dict = json.loads(response.content)
 
-            self.credentials = service_account.Credentials.from_service_account_info(creds_dict)
+            self.credentials = service_account.Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
             self.client = gspread.authorize(self.credentials)
 
             self.financial_tracker_sheet = self.client.open_by_key(GOOGLE_SHEET_ID).worksheet("Financial Tracker")
